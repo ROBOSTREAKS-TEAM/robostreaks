@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Admin Dashboard{% endblock %}</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <nav class="bg-gray-900 text-white shadow">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="{{ url_for('admin_dashboard') }}" class="text-xl font-bold hover:text-gray-300">
+        Admin Panel
+      </a>
+      <ul class="flex space-x-6">
+        <li><a href="{{ url_for('admin_dashboard') }}" class="hover:text-gray-300">Dashboard</a></li>
+        <li><a href="{{ url_for('admin_team_member_list') }}" class="hover:text-gray-300">Team Members</a></li>
+        <li><a href="{{ url_for('admin_alumni_list') }}" class="hover:text-gray-300">Alumni</a></li>
+        <li>
+          <form method="POST" action="{{ url_for('admin_logout') }}">
+            <button type="submit" class="hover:text-gray-300">Logout</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 py-6 w-full">
+    {% block content %}
+    <!-- Content goes here -->
+    {% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-400 text-center py-4 mt-auto">
+    <p>&copy; {{ current_year or "2025" }} Your Club or Organization Name</p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!-- Edit Team Member -->
+<section class="mb-14 bg-white rounded-lg shadow-md p-8 max-w-2xl mx-auto">
+  <h3 class="text-2xl font-semibold text-gray-800 mb-6 border-b border-gray-200 pb-2 text-center">Edit Team Member</h3>
+  <form action="{{ url_for('edit_team_member', id=member._id) }}" method="post" class="space-y-5">
+
+    <input type="text" name="name" placeholder="Name" required class="input-style" value="{{ member.name }}">
+    <input type="text" name="role" placeholder="Role" required class="input-style" value="{{ member.role }}">
+    <input type="text" name="image" placeholder="Image URL" required class="input-style" value="{{ member.image }}">
+    <input type="number" name="order" placeholder="Order (1, 2, 3...)" required class="input-style" value="{{ member.order }}">
+
+    <!-- Category select -->
+    <label for="category" class="block font-medium text-gray-700">Category</label>
+<select name="category" id="category" required class="input-style" onchange="updateSubcategoriesEdit()">
+  <option value="" disabled>Select category</option>
+  {% for cat in categories %}
+    <option value="{{ cat }}" {% if member.category == cat %}selected{% endif %}>{{ cat }}</option>
+  {% endfor %}
+</select>
+
+<label for="subcategory" class="block font-medium text-gray-700 mt-4">Subcategory</label>
+<select name="subcategory" id="subcategory" required class="input-style">
+  <option value="" disabled>Select subcategory</option>
+  <!-- subcategories will be populated dynamically by JS -->
+</select>
+
+
+    <!-- Social media fields -->
+    <input type="url" name="facebook" placeholder="Facebook URL" class="input-style" value="{{ member.facebook or '' }}">
+    <input type="url" name="instagram" placeholder="Instagram URL" class="input-style" value="{{ member.instagram or '' }}">
+    <input type="url" name="twitter" placeholder="Twitter URL" class="input-style" value="{{ member.twitter or '' }}">
+    <input type="url" name="linkedin" placeholder="LinkedIn URL" class="input-style" value="{{ member.linkedin or '' }}">
+
+    <div class="flex justify-between">
+      <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition duration-300 font-semibold shadow-md">
+        Update
+      </button>
+      <a href="{{ url_for('team') }}" class="bg-gray-300 text-gray-800 px-6 py-3 rounded-md hover:bg-gray-400 transition duration-300 font-semibold shadow-md">
+        Cancel
+      </a>
+    </div>
+  </form>
+</section>
+
+<style>
+  .input-style {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    transition: 0.3s;
+  }
+  .input-style:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 1px #2563eb;
+  }
+</style>
+
+<script>
+  const subcategories = {{ subcategories|tojson }};
+  
+  function updateSubcategoriesEdit() {
+    const categorySelect = document.getElementById('category');
+    const subcategorySelect = document.getElementById('subcategory');
+    const selectedCategory = categorySelect.value;
+
+    subcategorySelect.innerHTML = '<option value="" disabled>Select subcategory</option>';
+
+    (subcategories[selectedCategory] || []).forEach(subcat => {
+      const option = document.createElement('option');
+      option.value = subcat;
+      option.text = subcat;
+      if (subcat === "{{ member.subcategory }}") {
+        option.selected = true;
+      }
+      subcategorySelect.appendChild(option);
+    });
+  }
+
+  // Initialize subcategory options on page load
+  window.onload = () => {
+    updateSubcategoriesEdit();
+  };
+</script>

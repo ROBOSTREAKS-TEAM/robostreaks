@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Update Team Member</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-6">
+  <div class="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-6">
+    <h1 class="text-2xl font-bold mb-6 text-gray-800">Edit Team Member</h1>
+
+    <form method="POST">
+      <div class="mb-4">
+        <label class="block text-gray-700 font-semibold mb-2">Name</label>
+        <input type="text" name="name" value="{{ team_member.name }}" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" required />
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700 font-semibold mb-2">Role</label>
+        <input type="text" name="role" value="{{ team_member.role }}" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" required />
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700 font-semibold mb-2">Image URL</label>
+        <input type="text" name="image" value="{{ team_member.image }}" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      </div>
+
+      {% for platform in ["facebook", "twitter", "instagram", "linkedin"] %}
+      <div class="mb-4">
+        <label class="block text-gray-700 font-semibold mb-2 capitalize">{{ platform }} URL</label>
+        <input type="text" name="{{ platform }}" value="{{ team_member[platform] }}" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      </div>
+      {% endfor %}
+
+      <div class="flex justify-between items-center">
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded">Update</button>
+        <a href="{{ url_for('admin_dashboard') }}" class="text-gray-600 hover:underline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

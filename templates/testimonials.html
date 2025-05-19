@@ -1,0 +1,17 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<section class="py-16 bg-gray-100">
+    <div class="container mx-auto text-center">
+        <h2 class="text-4xl font-bold mb-4">What Our Members Say</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for testimonial in testimonials %}
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <p class="text-lg mb-4">"{{ testimonial['testimonial'] }}"</p>
+                <p class="font-semibold text-blue-600">- Member</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ROBOSTREAKS ALUMNI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <link rel="shortcut icon" type="x-icon" href="{{ url_for('static', filename='images/Robostreaks Logo li.png') }}">
+  <style>
+    .fade-in {
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .glass-card {
+      background: rgba(31, 41, 55, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans">
+  <div class="container mx-auto p-6 fade-in">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold">🎓 Our Alumni</h1>
+      <a href="{{ url_for('alumni_register') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition">
+        Register as Alumni
+      </a>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+      <input id="searchInput" type="text" placeholder="🔍 Search alumni by name, role, year..."
+        class="w-full md:w-1/2 px-4 py-2 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+      <!-- <select id="yearFilter" class="px-4 py-2 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="">🎓 Filter by Graduation Year</option>
+        {% for y in years %}
+          <option value="{{ y }}">{{ y }}</option>
+        {% endfor %}
+      </select> -->
+    </div>
+
+    {% if alumni %}
+    <div id="alumniGrid" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {% for person in alumni %}
+      <div class="alumni-card glass-card rounded-lg shadow-lg p-4 transition transform hover:scale-105 duration-300 fade-in"
+           data-name="{{ person.name | lower }}"
+           data-role="{{ person.role | lower }}"
+           data-workplace="{{ person.workplace | lower }}"
+           data-year="{{ person.grad_year }}">
+        <img src="{{ url_for('static', filename='uploads/' + person.photo) }}" alt="{{ person.name }}"
+          class="w-full h-48 object-cover rounded mb-4 border border-gray-700">
+        <h2 class="text-xl font-semibold">{{ person.name }}</h2>
+        <p class="text-sm text-gray-300 mb-2">{{ person.role }} at {{ person.workplace }}</p>
+        {% if person.grad_year %}
+        <p class="text-sm text-gray-400 mb-2">🎓 Graduated: {{ person.grad_year }}</p>
+        {% endif %}
+        {% if person.bio %}
+        <p class="text-sm text-gray-300 italic mb-2">"{{ person.bio }}"</p>
+        {% endif %}
+
+        <!-- Social Icons -->
+        <div class="flex space-x-4 mt-3">
+          {% if person.linkedin %}
+          <a href="{{ person.linkedin }}" target="_blank" class="hover:text-blue-400 transition"><i class="fab fa-linkedin fa-lg"></i></a>
+          {% endif %}
+          {% if person.github %}
+          <a href="{{ person.github }}" target="_blank" class="hover:text-gray-300 transition"><i class="fab fa-github fa-lg"></i></a>
+          {% endif %}
+          {% if person.email %}
+          <a href="mailto:{{ person.email }}" class="hover:text-green-400 transition"><i class="fas fa-envelope fa-lg"></i></a>
+          {% endif %}
+          {% if person.instagram %}
+          <a href="{{ person.instagram }}" target="_blank" class="hover:text-pink-400 transition"><i class="fab fa-instagram fa-lg"></i></a>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center text-gray-400 fade-in">No alumni registered yet.</p>
+    {% endif %}
+  </div>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const yearFilter = document.getElementById('yearFilter');
+    const cards = document.querySelectorAll('.alumni-card');
+
+    function filterAlumni() {
+      const searchTerm = searchInput.value.toLowerCase();
+      const selectedYear = yearFilter.value;
+
+      cards.forEach(card => {
+        const name = card.dataset.name;
+        const role = card.dataset.role;
+        const workplace = card.dataset.workplace;
+        const year = card.dataset.year;
+
+        const matchesSearch = name.includes(searchTerm) || role.includes(searchTerm) || workplace.includes(searchTerm) || year.includes(searchTerm);
+        const matchesYear = selectedYear === "" || year === selectedYear;
+
+        if (matchesSearch && matchesYear) {
+          card.style.display = "";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    }
+
+    searchInput.addEventListener('input', filterAlumni);
+    yearFilter.addEventListener('change', filterAlumni);
+  </script>
+</body>
+</html>

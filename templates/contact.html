@@ -1,0 +1,16 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<section class="py-16 bg-white">
+    <div class="container mx-auto text-center">
+        <h2 class="text-4xl font-bold mb-4">Contact Us</h2>
+        <p class="text-lg mb-6">Get in touch with us for more information or inquiries!</p>
+        <form action="#" method="POST" class="max-w-lg mx-auto">
+            <input type="text" name="name" placeholder="Your Name" class="w-full p-4 mb-4 border border-gray-300 rounded">
+            <input type="email" name="email" placeholder="Your Email" class="w-full p-4 mb-4 border border-gray-300 rounded">
+            <textarea name="message" placeholder="Your Message" rows="4" class="w-full p-4 mb-4 border border-gray-300 rounded"></textarea>
+            <button type="submit" class="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition">Send Message</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

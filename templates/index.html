@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROBOSTREAKS</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="shortcut icon" type="x-icon" href="{{ url_for('static', filename='images/Robostreaks Logo li.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend :wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+
+    <!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com "></script>
+
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap @5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Font Awesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css " integrity="sha512-+..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<!-- Animate on Scroll (Wow.js optional) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css " />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js "></script>
+<script>new WOW().init();</script>
+</head>
+
+<body class="bg-white-100">
+
+<!-- Navbar -->
+<nav id="navbar" class="fixed w-full z-50 top-0 left-0 transition-all duration-300 bg-transparent">
+  <!-- Background Blur Layer -->
+  <div id="navbar-bg" class="absolute inset-0 bg-black bg-opacity-0 backdrop-blur pointer-events-none hidden"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <div class="flex items-center justify-between h-16">
+      <!-- Logo -->
+      <a href="#" class="flex items-center">
+        <img src="{{ url_for('static', filename='images/ROBOSTREAKS COLOUR.png') }}" alt="Logo" class="h-10 w-auto object-contain">
+      </a>
+
+      <!-- Desktop Menu -->
+      <div class="hidden md:block">
+        <div class="ml-10 flex items-baseline space-x-4">
+          <a href="#" class="block text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md">Home</a>
+          <a href="#about" class="block text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md">About</a>
+          <a href="#wings" class="block text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md">Wings</a>
+          <a href="#team" class="block text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md">Team</a>
+          <a href="{{ url_for('alumni') }}" class="block text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md">Alumni</a>
+          <a href="#contact" class="block text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md">Contact</a>
+        </div>
+      </div>
+
+
+      <!-- Mobile Menu Button -->
+      <div class="md:hidden">
+        <button id="menu-btn" class="text-white focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <a href="#" class="block text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md">Home</a>
+        <a href="#about" class="block text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md">About</a>
+        <a href="#wings" class="block text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md">Wings</a>
+        <a href="#team" class="block text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md">Team</a>
+        <a href="{{ url_for('alumni') }}" class="block text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md">Alumni</a>
+        <a href="#contact" class="block text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md">Contact</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+    <style>
+        /* Optional: Add smooth scrolling */
+        html {
+        scroll-behavior: smooth;
+        }
+        .backdrop-blur {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); /* For Safari support */
+        }
+    </style>
+  <!-- JavaScript for Scroll & Mobile Menu -->
+  <script>
+    const navbar = document.getElementById('navbar');
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+  const navbarBg = document.getElementById("navbar-bg");
+
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 20) {
+      navbarBg.classList.remove("hidden");
+      navbarBg.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
+    } else {
+      navbarBg.style.backgroundColor = "rgba(0, 0, 0, 0)";
+      setTimeout(() => {
+        if (window.scrollY <= 20) navbarBg.classList.add("hidden");
+      }, 300);
+    }
+  });
+
+    // Toggle mobile menu
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  </script>
+
+    <!-- Main Content Area -->
+    <main class="mt-20">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+<!-- Footer -->
+<footer class="credits text-center py-10 px-4 border-t border-gray-300 text-gray-700 text-sm md:text-base">
+  ©2023 <a href="#home" class="text-green-600 hover:underline">Robostreaks</a> | All rights reserved. <br>
+  Made with ❤️ by <a href="{{ url_for('team') }}#div14" class="text-green-600 hover:underline">Dev Team</a>
+</footer>
+
+</body>
+
+</html>

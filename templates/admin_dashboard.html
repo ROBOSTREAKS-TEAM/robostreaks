@@ -1,0 +1,205 @@
+{% extends "index.html" %}
+{% block content %}
+
+<div class="container mx-auto py-12 px-6 max-w-7xl">
+
+  <!-- Dashboard Header -->
+  <h2 class="text-4xl font-extrabold text-gray-900 mb-12 border-b pb-4">Admin Dashboard</h2>
+
+  <!-- Grid Layout -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <!-- About Section -->
+    <section class="lg:col-span-1 bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4">Edit About Us</h3>
+      <form action="{{ url_for('update_about', section='about') }}" method="post" class="space-y-4">
+        <textarea name="content" rows="6"
+                  class="w-full border border-gray-300 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-300">{{ about.content }}</textarea>
+        <button type="submit"
+                class="mt-4 bg-blue-600 hover:bg-blue-700 text-white w-full py-2 px-4 rounded-md transition duration-300 font-medium shadow-sm">
+          Update About
+        </button>
+      </form>
+    </section>
+
+    <!-- Team Members Section -->
+    <section class="lg:col-span-2 space-y-6">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4">Team Members</h3>
+
+      {% if edit_member %}
+      <!-- Edit Existing Member Form -->
+      <div class="bg-yellow-50 border border-yellow-300 p-6 rounded-lg shadow mb-8 max-w-xl mx-auto">
+        <h4 class="text-lg font-semibold text-gray-800 mb-4">Edit Team Member</h4>
+        <form action="{{ url_for('update_team_member', id=edit_member._id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+          <input type="text" name="name" value="{{ edit_member.name }}" placeholder="Name" class="w-full border border-gray-300 rounded-md p-3">
+          <input type="text" name="role" value="{{ edit_member.role }}" placeholder="Role" class="w-full border border-gray-300 rounded-md p-3">
+
+          <!-- Current Image -->
+          <div class="flex items-center justify-center">
+            <img src="{{ url_for('uploaded_file', filename=edit_member.image) }}"
+                 onerror="this.onerror=null; this.src='/static/images/default.jpg';"
+                 alt="Current Image" class="w-24 h-24 object-cover rounded-full border border-gray-300 shadow-sm">
+          </div>
+
+          <!-- Upload New Image -->
+          <div class="form-group">
+            <label class="block text-gray-700 mb-2">Upload New Image (optional)</label>
+            <input type="file" name="photo" accept="image/*" class="w-full border border-gray-300 rounded-md p-2">
+          </div>
+
+          <!-- Social Links -->
+          <input type="text" name="facebook" value="{{ edit_member.get('facebook', '') }}" placeholder="Facebook URL" class="w-full border border-gray-300 rounded-md p-3">
+          <input type="text" name="instagram" value="{{ edit_member.get('instagram', '') }}" placeholder="Instagram URL" class="w-full border border-gray-300 rounded-md p-3">
+          <input type="text" name="twitter" value="{{ edit_member.get('twitter', '') }}" placeholder="Twitter URL" class="w-full border border-gray-300 rounded-md p-3">
+          <input type="text" name="linkedin" value="{{ edit_member.get('linkedin', '') }}" placeholder="LinkedIn URL" class="w-full border border-gray-300 rounded-md p-3">
+          <input type="number" name="order" value="{{ edit_member.order }}" placeholder="Order" class="w-full border border-gray-300 rounded-md p-3">
+
+          <div class="flex flex-col sm:flex-row gap-3 mt-4">
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md transition">Update</button>
+            <a href="{{ url_for('admin_team') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded-md text-center transition">Cancel</a>
+          </div>
+        </form>
+      </div>
+      {% endif %}
+
+      <!-- Team Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for member in team %}
+        <div class="bg-white rounded-lg shadow hover:shadow-lg p-5 flex flex-col items-center text-center">
+          <img src="{{ url_for('uploaded_file', filename=member.image) }}"
+               onerror="this.onerror=null; this.src='/static/images/default.jpg';"
+               alt="{{ member.name }}" class="w-24 h-24 rounded-full object-cover mb-4 shadow-sm border border-gray-200">
+          <h4 class="font-semibold text-lg text-gray-900">{{ member.name }}</h4>
+          <p class="text-gray-600 text-sm mb-4">{{ member.role }}</p>
+          <div class="flex gap-3 mt-2">
+            <a href="{{ url_for('admin_team', edit_id=member._id) }}" class="text-blue-600 hover:text-blue-800 font-medium">Edit</a>
+            <a href="{{ url_for('delete_team_member', id=member._id) }}" class="text-red-600 hover:text-red-800 font-medium">Delete</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+
+  <!-- Add New Team Member -->
+  <section class="mt-12 bg-white rounded-lg shadow-md p-8 max-w-xl mx-auto">
+    <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Add Team Member</h3>
+    <form action="{{ url_for('add_team_member') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+      <input type="text" name="name" placeholder="Name" class="w-full border border-gray-300 rounded-md p-3" required>
+      <input type="text" name="role" placeholder="Role" class="w-full border border-gray-300 rounded-md p-3" required>
+
+      <!-- Upload Image -->
+      <div class="form-group">
+        <label class="block text-gray-700 mb-2">Upload Image</label>
+        <input type="file" name="photo" accept="image/*" class="w-full border border-gray-300 rounded-md p-2" required>
+      </div>
+
+      <input type="number" name="order" placeholder="Display Order" class="w-full border border-gray-300 rounded-md p-3" required>
+
+      <!-- Category Dropdown -->
+      <select name="category" id="category" class="w-full border border-gray-300 rounded-md p-3" onchange="toggleSubCategory(this.value)" required>
+        <option value="">-- Select Category --</option>
+        <option value="Head of Department">Head of Department</option>
+        <option value="Club Secretaries">Club Secretaries</option>
+        <option value="Event managers">Event Managers</option>
+        <option value="Supervisor">Supervisor</option>
+        <option value="Media marketing">Media Marketing</option>
+        <option value="Wings Coordinators">Wings Coordinators</option>
+        <option value="Developers">Developers</option>
+        <option value="Founders">Founders</option>
+        <option value="Members">Members</option>
+      </select>
+
+      <!-- Subcategory Dropdown -->
+      <select name="sub_category" id="sub_category" class="w-full border border-gray-300 rounded-md p-3 hidden">
+        <option>-- Select Sub Category --</option>
+        <option value="Mechanical wings">Mechanical Wings</option>
+        <option value="Coding wings">Coding Wings</option>
+        <option value="Electrical and electronics wings">Electrical & Electronics Wings</option>
+        <option value="Research and Innovation Wings">Research & Innovation Wings</option>
+        <option value="Design and Animation Wings">Design & Animation Wings</option>
+      </select>
+
+      <!-- Social Links -->
+      <input type="text" name="facebook" placeholder="Facebook URL" class="w-full border border-gray-300 rounded-md p-3">
+      <input type="text" name="instagram" placeholder="Instagram URL" class="w-full border border-gray-300 rounded-md p-3">
+      <input type="text" name="twitter" placeholder="Twitter URL" class="w-full border border-gray-300 rounded-md p-3">
+      <input type="text" name="linkedin" placeholder="LinkedIn URL" class="w-full border border-gray-300 rounded-md p-3">
+
+      <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-md transition duration-300 font-semibold shadow-sm">
+        Add Member
+      </button>
+    </form>
+  </section>
+
+  <!-- Testimonials Admin -->
+  <section class="mt-12 mb-14">
+    <h3 class="text-2xl font-semibold text-gray-800 mb-8 text-center">Manage Testimonials</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for testimonial in testimonials %}
+      <div class="bg-white rounded-lg shadow hover:shadow-xl p-6">
+        <form action="{{ url_for('update_testimonial', id=testimonial._id) }}" method="POST" class="space-y-4">
+          <textarea name="quote" rows="4" class="w-full border border-gray-300 rounded-md p-3">{{ testimonial.quote }}</textarea>
+          <input type="text" name="author" value="{{ testimonial.author }}" placeholder="Author Name" class="w-full border border-gray-300 rounded-md p-3">
+
+          <!-- Star Rating -->
+          <div class="rating flex justify-center space-x-2 text-yellow-400 text-2xl">
+            {% for i in range(1, 6) %}
+            <label>
+              <input type="radio" name="rating_{{ testimonial._id }}" value="{{ i }}" {% if testimonial.rating == i %}checked{% endif %} class="hidden">
+              <span>⭐</span>
+            </label>
+            {% endfor %}
+          </div>
+
+          <!-- Image Preview -->
+          <div class="text-center">
+            <img src="{{ testimonial.image }}" alt="{{ testimonial.author }}" class="w-16 h-16 rounded-full mx-auto shadow-sm mb-2">
+            <p class="text-xs text-gray-500">Current Image</p>
+          </div>
+
+          <input type="text" name="image" value="{{ testimonial.image }}" placeholder="Image URL" class="w-full border border-gray-300 rounded-md p-3">
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition">
+            Update Testimonial
+          </button>
+        </form>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Add New Testimonial -->
+    <div class="mt-10 bg-white rounded-lg shadow-md p-8 max-w-lg mx-auto">
+      <h4 class="text-xl font-semibold mb-6 text-center">Add New Testimonial</h4>
+      <form action="{{ url_for('add_testimonial') }}" method="POST" class="space-y-4">
+        <textarea name="quote" rows="4" placeholder="Enter testimonial quote..." class="w-full border border-gray-300 rounded-md p-3" required></textarea>
+        <input type="text" name="author" placeholder="Author Name" class="w-full border border-gray-300 rounded-md p-3" required>
+        <input type="text" name="image" placeholder="Image URL" class="w-full border border-gray-300 rounded-md p-3" required>
+
+        <!-- Star Rating -->
+        <div class="rating flex justify-center space-x-2 text-yellow-400 text-2xl">
+          {% for i in range(1, 6) %}
+          <label>
+            <input type="radio" name="rating" value="{{ i }}" class="hidden" {% if i == 5 %}checked{% endif %}>
+            <span>⭐</span>
+          </label>
+          {% endfor %}
+        </div>
+
+        <button type="submit" class="w-full bg-blue-700 hover:bg-blue-800 text-white py-2 px-4 rounded-md transition">
+          Add Testimonial
+        </button>
+      </form>
+    </div>
+  </section>
+
+</div>
+
+<!-- JavaScript for Subcategory Toggle -->
+<script>
+  function toggleSubCategory(value) {
+    const subCat = document.getElementById("sub_category");
+    subCat.classList.toggle("hidden", value !== "Wings Coordinators");
+  }
+</script>
+
+{% endblock %}

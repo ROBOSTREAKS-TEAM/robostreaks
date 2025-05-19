@@ -1,0 +1,20 @@
+<!-- templates/admin/manage_alumni.html -->
+{% extends 'admin/base.html' %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Manage Alumni</h2>
+<a href="{{ url_for('admin_alumni.add_alumni') }}" class="bg-green-500 text-white px-4 py-2 rounded">Add Alumni</a>
+<table class="w-full mt-6">
+  <thead><tr><th>Name</th><th>Workplace</th><th>Actions</th></tr></thead>
+  <tbody>
+    {% for person in alumni %}
+    <tr>
+      <td>{{ person.name }}</td>
+      <td>{{ person.workplace }}</td>
+      <td>
+        <a href="{{ url_for('admin_alumni.delete_alumni', id=person._id) }}" class="text-red-500">Delete</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

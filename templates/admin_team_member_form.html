@@ -1,0 +1,61 @@
+<form method="POST" class="max-w-lg mx-auto p-6 bg-white rounded shadow">
+  <h2 class="text-2xl font-bold mb-6">{{ 'Edit Member' if member else 'Add New Member' }}</h2>
+
+  <label class="block mb-2 font-semibold">Name</label>
+  <input type="text" name="name" required value="{{ member.name if member else '' }}" class="w-full mb-4 p-2 border rounded">
+
+  <label class="block mb-2 font-semibold">Role</label>
+  <input type="text" name="role" required value="{{ member.role if member else '' }}" class="w-full mb-4 p-2 border rounded">
+
+  <label class="block mb-2 font-semibold">Category</label>
+  <select name="category" id="category-select" required class="w-full mb-4 p-2 border rounded">
+    <option value="">-- Select Category --</option>
+    {% for cat in categories %}
+      <option value="{{ cat }}" {% if member and member.category == cat %}selected{% endif %}>{{ cat }}</option>
+    {% endfor %}
+  </select>
+
+  <div id="sub-category-container" style="display: none;">
+    <label class="block mb-2 font-semibold">Subcategory (Wings Coordinators only)</label>
+    <select name="sub_category" id="sub-category-select" class="w-full mb-4 p-2 border rounded">
+      <option value="">-- Select Subcategory --</option>
+      {% for sub in wings_subcategories %}
+        <option value="{{ sub }}" {% if member and member.sub_category == sub %}selected{% endif %}>{{ sub }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <label class="block mb-2 font-semibold">Image Filename or URL</label>
+  <input type="text" name="image" value="{{ member.image if member else '' }}" class="w-full mb-4 p-2 border rounded" placeholder="e.g. team/alice.jpg">
+
+  <label class="block mb-2 font-semibold">LinkedIn URL</label>
+  <input type="url" name="linkedin" value="{{ member.linkedin if member else '' }}" class="w-full mb-4 p-2 border rounded">
+
+  <label class="block mb-2 font-semibold">Instagram URL</label>
+  <input type="url" name="instagram" value="{{ member.instagram if member else '' }}" class="w-full mb-4 p-2 border rounded">
+
+  <label class="block mb-2 font-semibold">Twitter URL</label>
+  <input type="url" name="twitter" value="{{ member.twitter if member else '' }}" class="w-full mb-4 p-2 border rounded">
+
+  <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+    {{ 'Update' if member else 'Add Member' }}
+  </button>
+</form>
+
+<script>
+  // Show/hide subcategory select depending on category
+  const categorySelect = document.getElementById('category-select');
+  const subCategoryContainer = document.getElementById('sub-category-container');
+
+  function toggleSubCategory() {
+    if (categorySelect.value === 'Wings Coordinators') {
+      subCategoryContainer.style.display = 'block';
+    } else {
+      subCategoryContainer.style.display = 'none';
+      document.getElementById('sub-category-select').value = '';
+    }
+  }
+
+  categorySelect.addEventListener('change', toggleSubCategory);
+  window.onload = toggleSubCategory;
+</script>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900 min-h-screen p-6">
+  <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold">Admin Dashboard</h1>
+      <a href="{{ url_for('logout') }}" class="text-red-600 hover:underline">Logout</a>
+    </div>
+
+    <!-- Team Section -->
+    <div class="mb-10">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-semibold">Team Members</h2>
+        <a href="{{ url_for('add_team_member') }}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">+ Add New</a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for member in team_members %}
+        <div class="border p-4 rounded shadow">
+          <h3 class="text-xl font-bold">{{ member.name }}</h3>
+          <p class="text-gray-600">{{ member.role }}</p>
+          <div class="mt-3 flex gap-4">
+            <a href="{{ url_for('update_team_member', member_id=member._id) }}" class="text-blue-600 hover:underline">Edit</a>
+            <a href="{{ url_for('delete_team_member', member_id=member._id) }}" class="text-red-600 hover:underline">Delete</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Testimonial Section -->
+    <div>
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-semibold">Testimonials</h2>
+        <a href="{{ url_for('add_testimonial') }}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">+ Add New</a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for t in testimonials %}
+        <div class="border p-4 rounded shadow">
+          <p class="text-gray-700 italic">“{{ t.content }}”</p>
+          <p class="text-right mt-2 font-semibold text-gray-800">- {{ t.author }}</p>
+          <div class="mt-3 flex gap-4">
+            <a href="{{ url_for('update_testimonial', testimonial_id=t._id) }}" class="text-blue-600 hover:underline">Edit</a>
+            <a href="{{ url_for('delete_testimonial', testimonial_id=t._id) }}" class="text-red-600 hover:underline">Delete</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>
