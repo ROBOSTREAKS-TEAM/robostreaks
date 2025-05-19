@@ -1,8 +1,8 @@
-Flask==2.3.3    # Known stable version with gunicorn and WTForms
-pymongo==4.6.0
-Werkzeug==3.0.1
-Flask-WTF==1.1.1
-python-dotenv==1.0.1
-requests==2.31.0
-Pillow==10.3.0
-gunicorn==21.2.0
+Flask    # Known stable version with gunicorn and WTForms
+pymongo
+Werkzeug
+Flask-WTF
+python-dotenv
+requests
+Pillow
+gunicorn
