@@ -3,6 +3,7 @@ pymongo
 Werkzeug
 Flask-WTF
 python-dotenv
+email-validator
 requests
 Pillow
 gunicorn
