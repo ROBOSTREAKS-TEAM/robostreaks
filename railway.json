@@ -7,7 +7,7 @@
   "deploy": {
     "runtime": "V2",
     "numReplicas": 1,
-    "startCommand": "gunicorn app:app",
+    "startCommand": "python app.py",
     "sleepApplication": false,
     "multiRegionConfig": {
       "europe-west4-drams3a": {
