@@ -1,4 +1,4 @@
-Flask==3.0.0
+Flask==2.3.3     # Known stable version with gunicorn and WTForms
 pymongo==4.6.0
 Werkzeug==3.0.1
 Flask-WTF==1.1.1
