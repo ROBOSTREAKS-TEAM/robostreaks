@@ -1,32 +1,93 @@
 {% extends 'index.html' %}
 {% block content %}
 <!-- Home Section -->
-<section id="home" class="min-h-screen w-full bg-cover bg-center flex flex-col items-center justify-center text-center relative overflow-hidden px-6 sm:px-12" style="background-image: url('{{ url_for('static', filename='images/robo.jpg') }}');">
+<section
+  id="home"
+  class="min-h-screen w-full bg-cover bg-center flex flex-col items-center justify-center text-center relative overflow-hidden px-4 sm:px-6 md:px-12"
+  style="background-image: url('{{ url_for('static', filename='images/robo.jpg') }}');"
+>
   <div class="absolute inset-0 bg-[#07212e] opacity-70 -z-10"></div>
-  <div class="z-10 max-w-4xl mx-auto px-4">
-    <span class="block text-white font-serif text-lg sm:text-xl md:text-2xl uppercase tracking-widest mb-4">Welcome to</span>
-    <h1 class="text-transparent text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold uppercase tracking-widest leading-none mb-6" style="-webkit-text-stroke: 1.2px white;">
+  <div class="z-10 max-w-full sm:max-w-4xl mx-auto px-4">
+    <span
+      class="block text-white font-serif text-base sm:text-lg md:text-xl uppercase tracking-widest mb-3 sm:mb-4 break-words"
+    >
+      Welcome to
+    </span>
+    <h1
+      class="text-transparent text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold uppercase tracking-widest leading-tight sm:leading-none mb-4 sm:mb-6 break-words"
+      style="-webkit-text-stroke: 1.1px white; "
+    >
       ROBOSTREAKS
     </h1>
-    <h2 class="text-white uppercase text-lg sm:text-xl md:text-2xl tracking-widest mb-8">
+    <h2
+      class="text-white uppercase text-sm sm:text-lg md:text-xl tracking-widest mb-6 sm:mb-8 break-words"
+    >
       PARALA MAHARAJA ENGINEERING COLLEGE
     </h2>
-    <a href="#about" class="inline-block py-3 px-8 rounded-full border-2 border-[#34f79c] bg-[#0d7042] text-white hover:bg-transparent hover:text-[#34f79c] transition duration-300 font-semibold tracking-wide text-base sm:text-lg">
+    <a
+      href="#about"
+      class="inline-block py-2.5 px-6 sm:py-3 sm:px-8 rounded-full border-2 border-[#34f79c] bg-[#0d7042] text-white hover:bg-transparent hover:text-[#34f79c] transition duration-300 font-semibold tracking-wide text-sm sm:text-base"
+    >
       EXPLORE
     </a>
   </div>
+
   <!-- Animated Waves -->
-  <div class="wave wave1 absolute bottom-0 left-0 h-32 w-full bg-no-repeat bg-contain" style="background-image: url('{{ url_for('static', filename='images/wave.png') }}'); animation: waves 8s linear infinite;"></div>
-  <div class="wave wave2 absolute bottom-0 left-0 h-32 w-full bg-no-repeat bg-contain" style="background-image: url('{{ url_for('static', filename='images/wave.png') }}'); animation: waves 6s linear infinite reverse; opacity: 0.3;"></div>
-  <div class="wave wave3 absolute bottom-0 left-0 h-32 w-full bg-no-repeat bg-contain" style="background-image: url('{{ url_for('static', filename='images/wave.png') }}'); animation: waves 4s linear infinite; opacity: 0.5;"></div>
+  <div
+    class="wave wave1 absolute bottom-0 left-0 h-20 sm:h-28 w-full bg-no-repeat bg-contain"
+    style="background-image: url('{{ url_for('static', filename='images/wave.png') }}'); animation: waves 8s linear infinite;"
+  ></div>
+  <div
+    class="wave wave2 absolute bottom-0 left-0 h-20 sm:h-28 w-full bg-no-repeat bg-contain opacity-30"
+    style="background-image: url('{{ url_for('static', filename='images/wave.png') }}'); animation: waves 6s linear infinite reverse;"
+  ></div>
+  <div
+    class="wave wave3 absolute bottom-0 left-0 h-20 sm:h-28 w-full bg-no-repeat bg-contain opacity-50"
+    style="background-image: url('{{ url_for('static', filename='images/wave.png') }}'); animation: waves 4s linear infinite;"
+  ></div>
 </section>
 
-<style> 
+<style>
   #home {
     margin-top: -80px;
   }
+  #home h1{
+    font-size: 1.9rem;
+  }
   #about {
-    margin-top: 80px;
+    margin-top: 70px;
+  }
+
+  /* Wave animation keyframes */
+  @keyframes waves {
+    0% {
+      background-position-x: 0;
+    }
+    100% {
+      background-position-x: 1000px;
+    }
+  }
+
+  /* Smaller devices fix for wave height and button */
+  @media (max-width: 640px) {
+    #home {
+      margin-top: -80px;
+    }
+    #about {
+      margin-top: 80px;
+    }
+  }
+
+  /* Prevent horizontal overflow */
+  body, html {
+    overflow-x: hidden;
+  }
+
+  /* Ensure long words break properly */
+  .break-words {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
   }
 </style>
 
