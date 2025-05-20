@@ -52,16 +52,20 @@ class AlumniForm(FlaskForm):
     github = StringField('GitHub URL')
     email = StringField('Email', validators=[Email()])
     instagram = StringField('Instagram URL')
-    grad_year = IntegerField('Graduation Year')  # new
-    bio = TextAreaField('Short Bio')             # new
+    grad_year = IntegerField('Graduation Year')
+    bio = TextAreaField('Short Bio')
     photo = FileField('Upload Photo', validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')])
     submit = SubmitField('Register')
 
 # Set upload folder
 UPLOAD_FOLDER = 'static/uploads/team'
+ALUMNI_UPLOAD_FOLDER = 'static/uploads/alumni'
+
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(ALUMNI_UPLOAD_FOLDER, exist_ok=True)
+
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['ALUMNI_UPLOAD_FOLDER'] = 'static/uploads/alumni'
+app.config['ALUMNI_UPLOAD_FOLDER'] = ALUMNI_UPLOAD_FOLDER
 
 # Admin Login Check
 def is_admin_logged_in():
@@ -387,43 +391,49 @@ def update_testimonial(id):
     )
     return redirect(url_for('admin_dashboard'))
 
-@app.route('/alumni/submit', methods=['GET', 'POST'])
-def alumni_submit():
-    if request.method == 'POST':
-        name = request.form.get('name')
-        role = request.form.get('role')
-        workplace = request.form.get('workplace')
-        linkedin = request.form.get('linkedin')
-        github = request.form.get('github')
-        email = request.form.get('email')
-        instagram = request.form.get('instagram')
-        photo = request.files.get('photo')
-        if photo:
-            filename = secure_filename(photo.filename)
-            photo_path = os.path.join('static/uploads/alumni', filename)
-            os.makedirs('static/uploads/alumni', exist_ok=True)
-            photo.save(photo_path)
-        else:
-            filename = ""
-        db.alumni.insert_one({
-            "name": name,
-            "role": role,
-            "workplace": workplace,
-            "linkedin": linkedin,
-            "github": github,
-            "email": email,
-            "instagram": instagram,
-            "photo": f"/static/uploads/alumni/{filename}" if filename else ""
-        })
-        flash("✅ Your information has been submitted.")
-        return redirect(url_for('home'))
-    return render_template('alumni_submit.html')
+# Alumni Registration Route (Updated)
+@app.route('/alumni/register', methods=['GET', 'POST'])
+def alumni_register():
+    form = AlumniForm()
+    if form.validate_on_submit():
+        file = form.photo.data
+        filename = secure_filename(file.filename)
+        photo_path = os.path.join(app.config['ALUMNI_UPLOAD_FOLDER'], filename)
+        file.save(photo_path)
 
+        alumni_data = {
+            "name": form.name.data,
+            "role": form.role.data,
+            "workplace": form.workplace.data,
+            "linkedin": form.linkedin.data,
+            "github": form.github.data,
+            "email": form.email.data,
+            "instagram": form.instagram.data,
+            "grad_year": form.grad_year.data,
+            "bio": form.bio.data,
+            "photo": f"alumni/{filename}"
+        }
+
+        db.alumni.insert_one(alumni_data)
+        flash("✅ Alumni registered successfully!")
+        return redirect(url_for('alumni'))
+
+    return render_template('alumni_register.html', form=form)
+
+
+# Serve Alumni Images
+@app.route('/static/uploads/alumni/<filename>')
+def uploaded_alumni_file(filename):
+    return send_from_directory(app.config['ALUMNI_UPLOAD_FOLDER'], filename)
+
+
+# Alumni Listing Page
 @app.route('/alumni')
 def alumni():
     search_query = request.args.get('search', '').strip()
     page = int(request.args.get('page', 1))
     per_page = 6
+
     query = {}
     if search_query:
         query['$or'] = [
@@ -432,9 +442,11 @@ def alumni():
             {"workplace": {"$regex": search_query, "$options": "i"}},
             {"grad_year": {"$regex": search_query, "$options": "i"}}
         ]
+
     total = db.alumni.count_documents(query)
     alumni_cursor = db.alumni.find(query).skip((page - 1) * per_page).limit(per_page)
     alumni = list(alumni_cursor)
+
     pagination = {
         'page': page,
         'per_page': per_page,
@@ -445,42 +457,108 @@ def alumni():
         'prev_num': page - 1,
         'next_num': page + 1,
     }
+
     return render_template('alumni.html', alumni=alumni, pagination=pagination)
 
-@app.route('/alumni/register', methods=['GET', 'POST'])
-def alumni_register():
-    form = AlumniForm()
-    if form.validate_on_submit():
-        file = form.photo.data
-        filename = secure_filename(file.filename)
-        photo_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(photo_path)
-        alumni_data = {
-            "name": form.name.data,
-            "role": form.role.data,
-            "workplace": form.workplace.data,
-            "linkedin": form.linkedin.data,
-            "github": form.github.data,
-            "email": form.email.data,
-            "instagram": form.instagram.data,
-            "grad_year": form.grad_year.data,   # new
-            "bio": form.bio.data,               # new
-            "photo": f"alumni/{filename}"       # stored as path from /static/uploads/
-        }
-        db.alumni.insert_one(alumni_data)
-        return redirect(url_for('alumni'))
-    return render_template('alumni_register.html', form=form)
 
+
+# Multi-step Alumni Registration (Optional - If You Want to Use It Later)
+@app.route('/alumni/register/step1', methods=['GET', 'POST'])
+def alumni_register_step1():
+    if request.method == 'POST':
+        session['alumni_step1'] = {
+            'name': request.form.get('name', ''),
+            'role': request.form.get('role', ''),
+            'workplace': request.form.get('workplace', '')
+        }
+
+        if not session['alumni_step1']['name']:
+            flash("Name is required.")
+            return redirect(url_for('alumni_register_step1'))
+
+        return redirect(url_for('alumni_register_step2'))
+
+    data = session.get('alumni_step1', {})
+    return render_template('alumni_register_step1.html', data=data)
+
+
+@app.route('/alumni/register/step2', methods=['GET', 'POST'])
+def alumni_register_step2():
+    if 'alumni_step1' not in session:
+        return redirect(url_for('alumni_register_step1'))
+
+    if request.method == 'POST':
+        session['alumni_step2'] = {
+            'linkedin': request.form.get('linkedin', ''),
+            'github': request.form.get('github', ''),
+            'email': request.form.get('email', ''),
+            'instagram': request.form.get('instagram', ''),
+            'grad_year': request.form.get('grad_year', ''),
+            'bio': request.form.get('bio', ''),
+            'photo': ''
+        }
+
+        photo = request.files.get('photo')
+        if photo and photo.filename != '':
+            filename = secure_filename(photo.filename)
+            photo.save(os.path.join(app.config['ALUMNI_UPLOAD_FOLDER'], filename))
+            session['alumni_step2']['photo'] = filename
+
+        alumni_data = {
+            **session['alumni_step1'],
+            **session['alumni_step2'],
+            "photo": session['alumni_step2']['photo']
+        }
+
+        db.alumni.insert_one(alumni_data)
+        session.pop('alumni_step1', None)
+        session.pop('alumni_step2', None)
+        flash("✅ Registration complete!")
+        return redirect(url_for('alumni'))
+
+    data = session.get('alumni_step2', {})
+    return render_template('alumni_register_step2.html', data=data)
+
+
+# Optional: Delete this if you're using single-step form
+@app.route('/alumni/submit', methods=['GET', 'POST'])
+def alumni_submit():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        role = request.form.get('role')
+        workplace = request.form.get('workplace')
+        photo = request.files.get('photo')
+        if photo:
+            filename = secure_filename(photo.filename)
+            photo.save(os.path.join('static/uploads/alumni', filename))
+        else:
+            filename = ""
+        db.alumni.insert_one({
+            "name": name,
+            "role": role,
+            "workplace": workplace,
+            "photo": f"/static/uploads/alumni/{filename}" if filename else ""
+        })
+        flash("✅ Submitted successfully!")
+        return redirect(url_for('home'))
+    return render_template('alumni_submit.html')
+
+
+# Logout
 @app.route('/admin/logout')
 def logout():
     session.pop('admin', None)
     flash("✅ Logged out successfully.")
     return redirect(url_for('home'))
 
+
 # Serve uploaded files
 @app.route('/static/uploads/team/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
